@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { LuTerminal, LuFolder, LuGitBranch, LuChevronRight } from 'react-icons/lu';
 import { commands, ALIASES, VISIBLE } from '../terminal/commands';
 import { RunContext, Cmd } from '../terminal/ui';
 import { store } from '../data';
@@ -7,15 +6,14 @@ import { store } from '../data';
 let nextId = 0;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/** starship-style prompt:  ~/nancy  main ❯ */
+/** bash-style prompt:  nancy@portfolio:~$ */
 function Prompt({ ok = true }) {
   return (
-    <span className="mr-2 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap">
-      <LuFolder className="size-3.5 text-accent-2" aria-hidden="true" />
-      <span className="font-semibold text-accent-2">~/nancy</span>
-      <LuGitBranch className="ml-1 size-3.5 text-accent" aria-hidden="true" />
-      <span className="text-accent">main</span>
-      <LuChevronRight className={`size-4 stroke-[3] ${ok ? 'text-ok' : 'text-err'}`} aria-hidden="true" />
+    <span className="mr-2 shrink-0 whitespace-nowrap">
+      <span className="font-semibold text-accent">nancy@portfolio</span>
+      <span className="text-ink-2">:</span>
+      <span className="font-semibold text-accent-2">~</span>
+      <span className={ok ? 'text-ink-2' : 'text-err'}>$</span>
     </span>
   );
 }
@@ -74,7 +72,7 @@ export default function Terminal({ theme, setTheme, runRef, onMatrix, deepRun })
       node = (
         <div>
           <span className="text-err">zsh: command not found: {first}</span>
-          {guess && <span className="text-ink-3"> — did you mean <Cmd c={guess} />?</span>}
+          {guess && <span className="text-ink-3">, did you mean <Cmd c={guess} />?</span>}
         </div>
       );
     }
@@ -144,24 +142,11 @@ export default function Terminal({ theme, setTheme, runRef, onMatrix, deepRun })
 
   return (
     <RunContext.Provider value={runTyped}>
-      <section
-        aria-label="Terminal"
-        className="glass flex min-h-0 flex-col overflow-hidden rounded-2xl !border-line-2 !bg-term/90 shadow-[0_30px_80px_-30px_rgba(0,0,0,.8)]"
-      >
-        {/* title bar */}
-        <div className="flex items-center gap-2.5 border-b border-line bg-white/[.02] px-5 py-2.5 text-[12px]">
-          <LuTerminal className="size-4 text-accent" aria-hidden="true" />
-          <span className="text-ink-2">nancy — zsh</span>
-          <span className="text-ink-3">· 120×40</span>
-          <span className="ml-auto flex items-center gap-1.5 text-ink-3">
-            <span className="size-1.5 rounded-full bg-ok" />connected
-          </span>
-        </div>
-
+      <section aria-label="Terminal" className="flex min-h-0 flex-1 flex-col">
         {/* scrollback */}
         <div
           ref={scrollRef}
-          className="min-h-0 flex-1 cursor-text overflow-y-auto px-5 py-6 text-[14px] leading-[1.8] text-ink-2 sm:px-12 sm:py-10"
+          className="min-h-0 flex-1 cursor-text overflow-y-auto px-4 py-5 text-[14px] leading-[1.7] text-ink-2 sm:px-8 sm:py-6"
           onMouseUp={(e) => {
             if (window.getSelection().toString() || e.target.closest('a, button, [role=button], canvas')) return;
             focus();
@@ -169,16 +154,16 @@ export default function Terminal({ theme, setTheme, runRef, onMatrix, deepRun })
         >
           <div className="max-w-[980px]" role="log" aria-live="polite">
             {entries.map((en) => (
-              <div key={en.id} className="border-b border-line/70 py-8 first:pt-0">
+              <div key={en.id} className="pb-6">
                 {en.cmd !== null && (
-                  <div className="flex flex-wrap items-center text-ink"><Prompt ok={en.ok !== false} /><span>{en.cmd}</span></div>
+                  <div className="flex flex-wrap text-ink"><Prompt ok={en.ok !== false} /><span>{en.cmd}</span></div>
                 )}
-                {en.node && <div className={`out ${en.cmd !== null ? 'mt-5' : ''}`}>{en.node}</div>}
+                {en.node && <div className={`out ${en.cmd !== null ? 'mt-2' : ''}`}>{en.node}</div>}
               </div>
             ))}
 
             {!busy && (
-              <label className="relative flex items-center pt-8 text-ink">
+              <label className="relative flex items-center text-ink">
                 <Prompt />
                 <span className="whitespace-pre-wrap break-all">{shown}</span>
                 <span className={`cursor-block ${focused || typing !== null ? 'animate-blink' : 'opacity-40'}`} aria-hidden="true" />

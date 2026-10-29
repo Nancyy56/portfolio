@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { LuCheck, LuArrowUpRight, LuCornerDownRight, LuCircleAlert } from 'react-icons/lu';
 
 // Lets any output line run a command when clicked (typed into the prompt first).
 export const RunContext = createContext(() => {});
@@ -19,11 +18,10 @@ export function Cmd({ c, children }) {
   );
 }
 
-/** Icon + bold title + dim note — the heading of a command's output. */
-export function Head({ icon: Icon, title, note }) {
+/** Bold title + dim note: the heading of a command's output. */
+export function Head({ title, note }) {
   return (
-    <div className="!mb-4 flex flex-wrap items-center gap-x-2.5">
-      {Icon && <Icon className="size-4 text-accent" aria-hidden="true" />}
+    <div className="!mb-3 flex flex-wrap items-baseline gap-x-3">
       <span className="font-bold text-ink">{title}</span>
       {note && <span className="text-ink-3">{note}</span>}
     </div>
@@ -82,7 +80,7 @@ export function Bar({ value: raw, width = 24, label = true, className = '' }) {
     <span className={`inline-flex items-center gap-3 whitespace-pre ${className}`} role="progressbar" aria-valuenow={Math.round(value)} aria-valuemin={0} aria-valuemax={100}>
       <span className="text-[15px] leading-none tracking-normal">
         <span className={done ? 'text-ok' : 'text-accent'}>{'━'.repeat(full)}{half ? '╸' : ''}</span>
-        <span className="text-[#272b38]">{'━'.repeat(rest)}</span>
+        <span className="text-line-2">{'━'.repeat(rest)}</span>
       </span>
       {label && <span className="w-[4ch] text-right tabular-nums text-ink-3">{Math.round(shown)}%</span>}
     </span>
@@ -93,21 +91,19 @@ export function Bar({ value: raw, width = 24, label = true, className = '' }) {
 export const Stack = ({ items }) => <span className="text-ink-3">{items.join(' · ')}</span>;
 
 export const Ext = ({ href, children }) => (
-  <a className="inline-flex items-center gap-1 text-accent-2 hover:underline" href={href} target="_blank" rel="noopener">
-    {children}<LuArrowUpRight className="size-3.5" aria-hidden="true" />
+  <a className="text-accent-2 hover:underline" href={href} target="_blank" rel="noopener">
+    {children} ↗
   </a>
 );
 
 export const Ok = ({ children }) => (
-  <div className="flex items-center gap-2"><LuCheck className="size-4 shrink-0 text-ok" aria-hidden="true" /><span>{children}</span></div>
+  <div><span className="text-ok">✓</span> {children}</div>
 );
 export const Err = ({ children }) => (
-  <div className="flex items-center gap-2 text-err"><LuCircleAlert className="size-4 shrink-0" aria-hidden="true" /><span>{children}</span></div>
+  <div className="text-err">{children}</div>
 );
 export const Next = ({ children }) => (
-  <div className="!mt-5 flex flex-wrap items-center gap-x-2 text-ink-3">
-    <LuCornerDownRight className="size-3.5" aria-hidden="true" />{children}
-  </div>
+  <div className="!mt-3 flex flex-wrap items-center gap-x-2 text-ink-3">{children}</div>
 );
 export const Sep = () => <span className="text-ink-3">·</span>;
 export const Gap = () => <div className="h-3" aria-hidden="true" />;

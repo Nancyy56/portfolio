@@ -24,6 +24,8 @@ export default function Snake({ onEnd }) {
     const FG = css.getPropertyValue('--fg').trim();
     const FG2 = css.getPropertyValue('--fg-2').trim();
     const BG = css.getPropertyValue('--term').trim();
+    const TEXT = css.getPropertyValue('--text').trim();
+    const DOT = css.getPropertyValue('--line-2').trim();
 
     let sn = [{ x: 6, y: 9 }, { x: 5, y: 9 }, { x: 4, y: 9 }];
     let dir = { x: 1, y: 0 };
@@ -45,18 +47,16 @@ export default function Snake({ onEnd }) {
 
     function draw() {
       ctx.fillStyle = BG; ctx.fillRect(0, 0, cv.width, cv.height);
-      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.fillStyle = DOT;
       for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) ctx.fillRect(i * S + S / 2 - 1, j * S + S / 2 - 1, 2, 2);
       ctx.fillStyle = FG2;
       ctx.beginPath(); ctx.arc(food.x * S + S / 2, food.y * S + S / 2, S / 2 - 4 + (frame % 6 < 3 ? 1 : 0), 0, Math.PI * 2); ctx.fill();
-      ctx.shadowColor = FG; ctx.shadowBlur = 8;
       sn.forEach((s, i) => {
-        ctx.fillStyle = i === 0 ? '#fff' : FG;
+        ctx.fillStyle = i === 0 ? TEXT : FG;
         ctx.beginPath(); ctx.roundRect(s.x * S + 1, s.y * S + 1, S - 2, S - 2, 4); ctx.fill();
       });
-      ctx.shadowBlur = 0;
       if (paused || waiting) {
-        ctx.fillStyle = '#e6e8f0'; ctx.font = '600 14px Inter, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillStyle = TEXT; ctx.font = '600 14px "JetBrains Mono", monospace'; ctx.textAlign = 'center';
         ctx.fillText(waiting ? 'Press an arrow key to start' : 'Paused', cv.width / 2, cv.height / 2 - 40);
       }
     }

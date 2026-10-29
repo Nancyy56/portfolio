@@ -1,20 +1,9 @@
-import {
-  LuUser, LuBriefcase, LuFolderGit2, LuChartNoAxesColumn, LuLayers, LuTrophy,
-  LuGraduationCap, LuMail, LuPalette, LuCircleHelp, LuCoffee, LuSparkles,
-} from 'react-icons/lu';
-import { FaGithub, FaLinkedin } from 'react-icons/fa6';
 import { DATA, degreeProgress } from '../data';
 import { Cmd, Head, Row, Branch, Bar, Stack, Ext, Ok, Err, Next, Sep, Gap } from './ui';
 import Snake from '../components/Snake';
+import Avatar from '../components/Avatar';
 
-export const THEMES = ['violet', 'ocean', 'sunset', 'rose'];
-
-const LOGO = String.raw`███╗   ██╗
-████╗  ██║
-██╔██╗ ██║
-██║╚██╗██║
-██║ ╚████║
-╚═╝  ╚═══╝`;
+export const THEMES = ['gruvbox', 'nord', 'solarized', 'light'];
 
 const toolCount = () => Object.values(DATA.stack).flat().length;
 
@@ -29,14 +18,14 @@ function Neofetch() {
     ['location', 'Sonipat, Haryana, IN'],
     ['uptime', `B.Tech CSE '27 · ${p}% complete`],
     ['packages', `${DATA.projects.length} projects · ${toolCount()} tools`],
-    ['shell', 'zsh — type help'],
+    ['status', 'open to AI/ML roles & internships'],
   ];
   return (
     <div className="flex gap-10">
-      <pre className="text-grad hidden shrink-0 pt-2 text-[24px] leading-[1.12] font-bold sm:block" aria-hidden="true">{LOGO}</pre>
+      <Avatar className="hidden size-[132px] shrink-0 sm:block" />
       <div className="min-w-0">
         <div><span className="font-bold text-accent">guest</span><span className="text-ink-3">@</span><span className="font-bold text-accent-2">nancy.os</span></div>
-        <div className="text-ink-3">{'─'.repeat(23)}</div>
+        <div className="text-ink-3">{'-'.repeat(20)}</div>
         {info.map(([k, v]) => (
           <div key={k} className="flex gap-3">
             <span className="w-[9ch] shrink-0 font-semibold text-accent">{k}</span>
@@ -62,9 +51,14 @@ export const commands = {
       <Gap />
       <Neofetch />
       <Gap />
-      <div className="text-ink">Hi, I'm <span className="text-grad font-bold">{DATA.name}</span>. {DATA.bio}</div>
+      <div className="text-ink">Hi, I'm <span className="font-bold text-accent">{DATA.name}</span>. {DATA.bio}</div>
+      <Gap />
+      <Row k="resume"><Ext href={DATA.resume}>resume.pdf</Ext></Row>
+      <Row k="email"><a className="text-accent-2 hover:underline" href={`mailto:${DATA.email}`}>{DATA.email}</a></Row>
+      <Row k="github"><Ext href={DATA.github}>{DATA.github.replace('https://', '')}</Ext></Row>
+      <Gap />
       <div className="text-ink-3">
-        Type <Cmd c="help" /> to see commands, or try <Cmd c="whoami" /> · <Cmd c="projects" /> · <Cmd c="experience" />
+        Type <Cmd c="help" /> or click a command below. Start with <Cmd c="whoami" />, <Cmd c="experience" /> or <Cmd c="projects" />.
       </div>
     </>
   ),
@@ -77,7 +71,7 @@ export const commands = {
     ];
     return (
       <>
-        <Head icon={LuCircleHelp} title="help" note="click or type a command" />
+        <Head title="help" note="click or type a command" />
         <div className="grid max-w-3xl gap-x-12 gap-y-1.5 sm:grid-cols-2">
           {rows.map(([c, d]) => (
             <div key={c} className="flex gap-3">
@@ -92,13 +86,13 @@ export const commands = {
 
   whoami: () => (
     <>
-      <Head icon={LuUser} title="nancy" note={DATA.role} />
+      <Head title="nancy" note={DATA.role} />
       <div className="max-w-3xl text-ink-2">{DATA.bio}</div>
       <Gap />
       <div className="text-ink-3">what I do</div>
-      <Branch>RAG pipelines with citation-grounded, verifiable answers</Branch>
+      <Branch>RAG pipelines that cite their sources</Branch>
       <Branch>Semantic search & vector databases <span className="text-ink-3">· Qdrant, ChromaDB, SentenceTransformers</span></Branch>
-      <Branch last>LLM-integrated backend services <span className="text-ink-3">· FastAPI, Node.js, GPT-4o / Gemini</span></Branch>
+      <Branch last>Backend services that call LLMs <span className="text-ink-3">· FastAPI, Node.js, GPT-4o / Gemini</span></Branch>
       <Gap />
       <Row k="now">AI Integration Developer Intern <span className="text-ink-3">@ IFOA India</span></Row>
       <Row k="education">B.Tech CSE &apos;27 <span className="text-ink-3">· DCRUST · CGPA {DATA.education.cgpa.split(' ')[0]}</span></Row>
@@ -114,7 +108,7 @@ export const commands = {
     const x = DATA.experience[0];
     return (
       <>
-        <Head icon={LuBriefcase} title={x.role} note={x.period} />
+        <Head title={x.role} note={x.period} />
         <div className="text-accent">IFOA India <span className="text-ink-3">· {x.place}</span> <span className="ml-1 inline-flex items-center gap-1.5 text-xs text-ok"><span className="size-1.5 rounded-full bg-ok" />{x.status.toLowerCase()}</span></div>
         {x.points.map((pt, i) => <Branch key={i} last={i === x.points.length - 1}>{pt}</Branch>)}
         <Row k="stack"><Stack items={x.stack} /></Row>
@@ -125,7 +119,7 @@ export const commands = {
 
   projects: () => (
     <>
-      <Head icon={LuFolderGit2} title="projects" note={`${DATA.projects.length} completed`} />
+      <Head title="projects" note={`${DATA.projects.length} completed`} />
       {DATA.projects.map((p, i) => (
         <div key={p.name} className="flex flex-wrap gap-x-4 py-0.5">
           <span className="text-ink-3">0{i + 1}</span>
@@ -144,7 +138,7 @@ export const commands = {
     if (!p) return <Err>project: pick a number 1–{DATA.projects.length}</Err>;
     return (
       <>
-        <Head icon={LuFolderGit2} title={p.name} note={p.title} />
+        <Head title={p.name} note={p.title} />
         {p.points.map((pt, i) => <Branch key={i} last={i === p.points.length - 1}>{pt}</Branch>)}
         <Row k="stack"><Stack items={p.stack} /></Row>
         <Row k="impact"><span className="text-accent-2">{p.highlight}</span></Row>
@@ -160,7 +154,7 @@ export const commands = {
 
   skills: () => (
     <>
-      <Head icon={LuChartNoAxesColumn} title="skills" note="self-assessed proficiency" />
+      <Head title="skills" note="self-assessed proficiency" />
       <div className="grid max-w-4xl gap-x-14 gap-y-1.5 lg:grid-cols-2">
         {DATA.skills.map(([n, v]) => (
           <div key={n} className="flex items-center gap-3">
@@ -175,7 +169,7 @@ export const commands = {
 
   stack: () => (
     <>
-      <Head icon={LuLayers} title="tech stack" note={`${toolCount()} tools`} />
+      <Head title="tech stack" note={`${toolCount()} tools`} />
       {Object.entries(DATA.stack).map(([cat, items]) => (
         <Row key={cat} k={cat} w="w-[16ch]"><Stack items={items} /></Row>
       ))}
@@ -184,7 +178,7 @@ export const commands = {
 
   awards: () => (
     <>
-      <Head icon={LuTrophy} title="awards & leadership" />
+      <Head title="awards & leadership" />
       {DATA.achievements.map(([t, d], i) => (
         <Branch key={t} last={i === DATA.achievements.length - 1}>
           <span className="text-ink">{t}</span> <span className="text-ink-3">· {d}</span>
@@ -197,7 +191,7 @@ export const commands = {
     const e = DATA.education;
     return (
       <>
-        <Head icon={LuGraduationCap} title="B.Tech CSE" note={e.period} />
+        <Head title="B.Tech CSE" note={e.period} />
         <div className="text-accent">DCRUST <span className="text-ink-3">· {e.place}</span></div>
         <Row k="cgpa">{e.cgpa}</Row>
         <Row k="progress"><Bar value={degreeProgress() * 100} width={24} /></Row>
@@ -208,10 +202,11 @@ export const commands = {
 
   contact: () => (
     <>
-      <Head icon={LuMail} title="contact" note="open to AI/ML roles & internships" />
-      <div className="flex items-center gap-3"><LuMail className="size-4 text-ink-3" /><a className="text-accent-2 hover:underline" href={`mailto:${DATA.email}`}>{DATA.email}</a></div>
-      <div className="flex items-center gap-3"><FaLinkedin className="size-4 text-ink-3" /><Ext href={DATA.linkedin}>{DATA.linkedin.replace('https://', '')}</Ext></div>
-      <div className="flex items-center gap-3"><FaGithub className="size-4 text-ink-3" /><Ext href={DATA.github}>{DATA.github.replace('https://', '')}</Ext></div>
+      <Head title="contact" note="open to AI/ML roles & internships" />
+      <Row k="email"><a className="text-accent-2 hover:underline" href={`mailto:${DATA.email}`}>{DATA.email}</a></Row>
+      <Row k="linkedin"><Ext href={DATA.linkedin}>{DATA.linkedin.replace('https://', '')}</Ext></Row>
+      <Row k="github"><Ext href={DATA.github}>{DATA.github.replace('https://', '')}</Ext></Row>
+      <Row k="resume"><Ext href={DATA.resume}>resume.pdf</Ext></Row>
       <Next>recruiters, try <Cmd c="sudo hire nancy" /></Next>
     </>
   ),
@@ -226,11 +221,11 @@ export const commands = {
     const others = (skip) => THEMES.filter((x) => x !== skip).map((x, i) => (
       <span key={x}>{i > 0 && <Sep />} <Cmd c={`theme ${x}`}>{x}</Cmd> </span>
     ));
-    if (!THEMES.includes(t)) return <Err>theme: unknown "{t}" — try {others()}</Err>;
+    if (!THEMES.includes(t)) return <Err>theme: unknown "{t}", try {others()}</Err>;
     ctx.setTheme(t);
     return (
       <div className="flex flex-wrap items-center gap-x-2">
-        <LuPalette className="size-4 text-accent" /> theme <span className="text-ink">{t}</span>
+        theme <span className="text-ink">{t}</span>
         <span className="text-ink-3">· others:</span>{others(t)}
       </div>
     );
@@ -247,7 +242,7 @@ export const commands = {
       return (
         <>
           <div className="text-ink-3">[sudo] password for guest: ********</div>
-          <Ok>access granted — excellent decision. opening mail…</Ok>
+          <Ok>opening mail…</Ok>
         </>
       );
     }
@@ -263,17 +258,12 @@ export const commands = {
   cat: (args) => (String(args[0]).includes('secret')
     ? <div className="text-ink-3">try: matrix · sudo · coffee · rm -rf /</div>
     : <Err>cat: {args[0] || '(nothing)'}: No such file</Err>),
-  rm: () => (
-    <>
-      <div className="flex flex-wrap items-center gap-3 text-warn">deleting everything… <Bar value={50} width={16} /></div>
-      <div className="flex items-center gap-2"><LuSparkles className="size-4 text-accent" /> just kidding. nice try though.</div>
-    </>
-  ),
-  coffee: () => <div className="flex items-center gap-2"><LuCoffee className="size-4 text-warn" /> <span className="text-ink-3">coffee brewed — ready for the next RAG pipeline</span></div>,
-  hello: () => <div>hi there, I'm Nancy. type <Cmd c="whoami" /> to learn more.</div>,
+  rm: () => <Err>rm: /: Permission denied</Err>,
+  coffee: () => <div className="text-ink-3">brewing…</div>,
+  hello: () => <div>hi. type <Cmd c="whoami" /> to learn more.</div>,
   date: () => <div>{new Date().toString()}</div>,
   echo: (args) => <div>{args.join(' ')}</div>,
-  exit: () => <div className="text-ink-3">this session stays open. try <Cmd c="help" /> instead.</div>,
+  exit: () => <div className="text-ink-3">can't exit a web page. try <Cmd c="help" />.</div>,
 };
 
 export const ALIASES = {

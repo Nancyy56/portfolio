@@ -52,10 +52,16 @@ function draw(cv, blink) {
   }));
 }
 
-export default function Avatar({ theme, className = 'mx-auto mt-4 mb-3.5 block size-[120px] rounded-3xl p-2.5 animate-float' }) {
+export default function Avatar({ className = '' }) {
   const ref = useRef(null);
 
-  useEffect(() => { draw(ref.current, false); }, [theme]);
+  // redraw when the theme changes, since the blazer uses theme colours
+  useEffect(() => {
+    draw(ref.current, false);
+    const obs = new MutationObserver(() => draw(ref.current, false));
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => obs.disconnect();
+  }, []);
 
   useEffect(() => {
     let t1, t2;
@@ -76,7 +82,7 @@ export default function Avatar({ theme, className = 'mx-auto mt-4 mb-3.5 block s
       height={24}
       role="img"
       aria-label="Pixel-art avatar of Nancy"
-      className={`pixelated grad-border relative shadow-[0_10px_40px_-10px_color-mix(in_srgb,var(--fg)_45%,transparent)] ${className}`}
+      className={`pixelated ${className}`}
     />
   );
 }
